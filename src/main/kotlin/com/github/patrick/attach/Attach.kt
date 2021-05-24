@@ -47,7 +47,6 @@ object Attach {
     private fun getClass(prefix: (() -> Unit)?, postfix: (() -> Unit)?): Class<out Any> {
         val buddy = ByteBuddy()
             .subclass(Object::class.java)
-            .name("Patched")
             .defineMethod("enter", Void.TYPE, Visibility.PUBLIC, Ownership.STATIC)
             .intercept(MethodCall.call(prefix))
             .annotateMethod(
