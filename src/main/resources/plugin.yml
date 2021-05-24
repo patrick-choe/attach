@@ -2,5 +2,4 @@ name: Attach
 version: 1.0-SNAPSHOT
 main: com.github.patrick.attach.plugin.AttachPlugin
 load: STARTUP
-depend: [ Kotlin ]
 api-version: 1.13

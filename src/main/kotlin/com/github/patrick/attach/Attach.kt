@@ -34,10 +34,10 @@ object Attach {
             .type(ElementMatchers.named(name))
             .transform { builder, _, _, _ ->
                 val clazz = getClass(prefix, postfix)
-                val instance = clazz.getDeclaredConstructor().newInstance()
-                println(clazz.declaredMethods.joinToString("\n") { it.declaredAnnotations.joinToString { annotation -> annotation.toString() } })
-                clazz.getDeclaredMethod("enter").invoke(instance)
-                clazz.getDeclaredMethod("exit").invoke(instance)
+//                val instance = clazz.getDeclaredConstructor().newInstance()
+//                println(clazz.declaredMethods.joinToString("\n") { it.declaredAnnotations.joinToString { annotation -> annotation.toString() } })
+//                clazz.getDeclaredMethod("enter").invoke(instance)
+//                clazz.getDeclaredMethod("exit").invoke(instance)
                 builder.visit(Advice.to(clazz).on(ElementMatchers.named(methodName)))
             }
             .installOnByteBuddyAgent()

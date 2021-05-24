@@ -12,7 +12,10 @@ version = "1.0-SNAPSHOT"
 
 val kebabRegex = "-[a-z]".toRegex()
 val relocations = setOf(
-    "net.bytebuddy"
+    "kotlin",
+    "net.bytebuddy",
+    "org.intellij.lang.annotations",
+    "org.jetbrains.annotations"
 )
 
 repositories {
@@ -22,8 +25,10 @@ repositories {
 }
 
 dependencies {
-    compileOnly(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib-jdk8"))
+
     compileOnly("org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT")
+
     implementation("net.bytebuddy:byte-buddy:1.11.0")
     implementation("net.bytebuddy:byte-buddy-agent:1.11.0")
 }

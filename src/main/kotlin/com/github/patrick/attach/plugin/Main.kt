@@ -15,7 +15,7 @@ fun main() {
         })
     }
 
-    println(nano)
+    println("Measured nanoseconds: $nano")
 
     Test().run()
 }
