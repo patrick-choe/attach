@@ -5,7 +5,8 @@ import kotlin.system.measureNanoTime
 
 
 fun main() {
-    Test().run()
+    val test = Test()
+    test.run()
 
     val nano = measureNanoTime {
         Test::class.java.patch("run", prefix = {
@@ -17,5 +18,5 @@ fun main() {
 
     println("Measured nanoseconds: $nano")
 
-    Test().run()
+    test.run()
 }
