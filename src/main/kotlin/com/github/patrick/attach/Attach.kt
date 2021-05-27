@@ -3,6 +3,7 @@ package com.github.patrick.attach
 import net.bytebuddy.agent.ByteBuddyAgent
 import net.bytebuddy.agent.builder.AgentBuilder
 import net.bytebuddy.asm.Advice
+import net.bytebuddy.dynamic.ClassFileLocator
 import net.bytebuddy.jar.asm.ClassWriter
 import net.bytebuddy.jar.asm.FieldVisitor
 import net.bytebuddy.jar.asm.MethodVisitor
@@ -14,19 +15,10 @@ object Attach {
     private var initialized = false
 
     @JvmStatic
-    private val classLoader by lazy {
-        object : ClassLoader(Attach::class.java.classLoader) {
-            fun defineClass(name: String, b: ByteArray): Class<*> {
-                return defineClass(name, b, 0, b.count())
-            }
-        }
-    }
-
-    @JvmStatic
     fun Class<*>.patch(methodName: String, prefix: (() -> Unit)? = null, postfix: (() -> Unit)? = null) {
         if (!initialized) {
-            initialized = true
             ByteBuddyAgent.install()
+            initialized = true
         }
 
         if (prefix == null && postfix == null) {
@@ -39,20 +31,25 @@ object Attach {
             .with(AgentBuilder.TypeStrategy.Default.REDEFINE)
             .type(ElementMatchers.named(name))
             .transform { builder, _, _, _ ->
-                val clazz = getNewClass()
-                clazz.getDeclaredConstructor(Function0::class.java, Function0::class.java).newInstance(prefix, postfix)
-//                println(clazz.declaredMethods.joinToString("\n") { it.declaredAnnotations.joinToString { annotation -> annotation.toString() } })
-//                clazz.getDeclaredMethod("enter").invoke(null)
-//                clazz.getDeclaredMethod("exit").invoke(null)
-                builder.visit(Advice.to(clazz).on(ElementMatchers.named(methodName)))
+                val bytes = getBytes()
+
+                val clazz = Utils.defineClass(bytes).apply {
+                    getDeclaredConstructor(Function0::class.java, Function0::class.java).newInstance(prefix, postfix)
+                }
+
+                builder.visit(
+                    Advice.to(clazz, ClassFileLocator.Simple.of(clazz.name, bytes))
+                        .on(ElementMatchers.named(methodName))
+                )
             }
             .installOnByteBuddyAgent()
     }
 
+
     @JvmStatic
-    private fun getNewClass(): Class<out Any> {
+    private fun getBytes(): ByteArray {
         val currentTime = System.nanoTime()
-        val name = "com/github/patrick/attach/build/C$currentTime"
+        val name = "com/github/patrick/attach/C$currentTime"
 
         val classWriter = ClassWriter(ClassWriter.COMPUTE_MAXS)
         var fieldVisitor: FieldVisitor
@@ -211,7 +208,6 @@ object Attach {
         val bytes = classWriter.toByteArray()
 
         println(bytes.joinToString("") { "%02x".format(it) })
-
-        return classLoader.defineClass("com.github.patrick.attach.build.C$currentTime", bytes)
+        return bytes
     }
 }
