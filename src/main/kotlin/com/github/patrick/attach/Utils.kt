@@ -15,6 +15,7 @@ internal object Utils {
     @Volatile
     private var lookupMethod: Method? = null
 
+    @JvmStatic
     private var lookup: Any? = null
 
     @JvmStatic
