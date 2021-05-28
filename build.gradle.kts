@@ -41,18 +41,19 @@ tasks {
         kotlinOptions.jvmTarget = "1.8"
     }
 
+    create<Jar>("toolsJar") {
+        archiveBaseName.set("tools-min")
+        from("src/main/resources/tools-min.jar")
+    }
+
+    withType<ProcessResources> {
+        exclude("**/*.jar")
+    }
+
     withType<ShadowJar> {
+        from(named("toolsJar"))
+
         archiveClassifier.set("")
-
-//        val projectName = kebabRegex.replace(rootProject.name) { result ->
-//            result.value.drop(1)
-//        }
-
-        from(files(Jvm.current().toolsJar))
-
-//        relocations.forEach { pattern ->
-//            relocate(pattern, "com.github.patrick.$projectName.shaded.$pattern")
-//        }
 
         manifest {
             attributes("Main-Class" to "com.github.patrick.attach.plugin.MainKt")

@@ -17,11 +17,11 @@ object Attach {
     fun Class<*>.patch(methodName: String, prefix: (() -> Unit)? = null, postfix: (() -> Unit)? = null) {
         if (!initialized) {
             if (Utils.isLegacy && !Utils.isJDK) {
-                Tools.loadAttachLibrary()
+                val toolsJar = Tools.loadAttachLibrary()
                 ByteBuddyAgent.install(ByteBuddyAgent.AttachmentProvider {
                     ByteBuddyAgent.AttachmentProvider.Accessor.Simple.of(
-                        URLClassLoader(arrayOf(Utils.currentJar.toURI().toURL()), ClassLoader.getSystemClassLoader()),
-                        Utils.currentJar
+                        URLClassLoader(arrayOf(toolsJar.toURI().toURL()), ClassLoader.getSystemClassLoader()),
+                        toolsJar
                     )
                 })
             } else {

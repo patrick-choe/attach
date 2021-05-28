@@ -13,15 +13,17 @@ object Tools {
     private const val NATIVE_DIR = "natives/"
 
     @JvmStatic
-    private val isPlugin by lazy {
-        runCatching {
-            Class.forName("org.bukkit.plugin.java.JavaPlugin")
-        }.isSuccess
+    private val parentDir by lazy {
+        if (runCatching { Class.forName("org.bukkit.plugin.java.JavaPlugin") }.isSuccess) {
+            AttachPlugin.plugin.dataFolder
+        } else {
+            File(Attach::class.java.protectionDomain.codeSource.location.toURI()).parentFile
+        }
     }
 
     @JvmStatic
-    fun loadAttachLibrary() {
-        val path = installBinary()
+    fun loadAttachLibrary(): File {
+        val path = installBinary().parentFile.canonicalPath
         val separator = System.getProperty("path.separator")
         val property = "java.library.path"
         val pathProperty = System.getProperty(property)
@@ -32,24 +34,32 @@ object Tools {
         val fieldSysPath = ClassLoader::class.java.getDeclaredField("sys_paths")
         fieldSysPath.isAccessible = true
         fieldSysPath[null] = null
+
+        return installToolsJar()
     }
 
     @JvmStatic
-    private fun installBinary(): String {
+    private fun installBinary(): File {
         val platform = Platform.platform
-        val path =
-            TOOLS_DIR + ATTACH_DIR + NATIVE_DIR + (if (Platform.is64Bit) "64/" else "32/") + platform.dir + platform.binary
-        val file = if (isPlugin) {
-            File(AttachPlugin.plugin.dataFolder, path)
-        } else {
-            val parent = File(Attach::class.java.protectionDomain.codeSource.location.toURI()).parent
-            File(parent, path)
-        }
+        val path = TOOLS_DIR + ATTACH_DIR + NATIVE_DIR +
+                (if (Platform.is64Bit) "64/" else "32/") + platform.dir + platform.binary
+
+        return installFile(path)
+    }
+
+    @JvmStatic
+    private fun installToolsJar(): File {
+        val path = "tools-min.jar"
+
+        return installFile(path)
+    }
+
+    @JvmStatic
+    private fun installFile(path: String): File {
+        val file = File(parentDir, path)
 
         if (!file.exists()) {
-            if (!file.parentFile.mkdirs()) {
-                throw RuntimeException("Failed to create directory")
-            }
+            file.parentFile.mkdirs()
 
             runCatching {
                 this::class.java.classLoader.getResourceAsStream(path)?.use { stream ->
@@ -60,6 +70,6 @@ object Tools {
             }
         }
 
-        return file.parentFile.canonicalPath
+        return file
     }
 }
