@@ -49,7 +49,7 @@ object Tools {
 
     @JvmStatic
     private fun installToolsJar(): File {
-        val path = "tools-min.jar"
+        val path = TOOLS_DIR + ATTACH_DIR + "tools-min.jar"
 
         return installFile(path)
     }

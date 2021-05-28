@@ -1,25 +1,14 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import groovy.lang.MissingPropertyException
-import org.gradle.internal.jvm.Jvm
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `maven-publish`
-    kotlin("jvm") version "1.5.0"
+    kotlin("jvm") version "1.5.10"
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
 group = "com.github.patrick-mc"
 version = "1.0-SNAPSHOT"
-
-//val kebabRegex = "-[a-z]".toRegex()
-//val relocations = setOf(
-//    "kotlin",
-//    "net.bytebuddy",
-//    "org.intellij.lang.annotations",
-//    "org.jetbrains.annotations"
-//)
 
 repositories {
     maven("https://repo.maven.apache.org/maven2/")
@@ -37,27 +26,22 @@ dependencies {
 }
 
 tasks {
-    withType<KotlinCompile> {
+    compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
+    }
+
+    jar {
+        from(named("toolsJar"))
+    }
+
+    processResources {
+        exclude("**/*.jar")
     }
 
     create<Jar>("toolsJar") {
         archiveBaseName.set("tools-min")
-        from("src/main/resources/tools-min.jar")
-    }
-
-    withType<ProcessResources> {
-        exclude("**/*.jar")
-    }
-
-    withType<ShadowJar> {
-        from(named("toolsJar"))
-
-        archiveClassifier.set("")
-
-        manifest {
-            attributes("Main-Class" to "com.github.patrick.attach.plugin.MainKt")
-        }
+        from("src/main/resources/tools/attach/tools-min.jar")
+        into("tools/attach")
     }
 
     create<Jar>("sourcesJar") {
