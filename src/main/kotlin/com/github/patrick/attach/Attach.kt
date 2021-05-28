@@ -11,12 +11,9 @@ import net.bytebuddy.jar.asm.Opcodes
 import net.bytebuddy.matcher.ElementMatchers
 import java.net.URLClassLoader
 
-
 object Attach {
-    @JvmStatic
     private var initialized = false
 
-    @JvmStatic
     fun Class<*>.patch(methodName: String, prefix: (() -> Unit)? = null, postfix: (() -> Unit)? = null) {
         if (!initialized) {
             if (Utils.isLegacy && !Utils.isJDK) {
@@ -57,8 +54,6 @@ object Attach {
             .installOnByteBuddyAgent()
     }
 
-
-    @JvmStatic
     private fun getBytes(): ByteArray {
         val currentTime = System.nanoTime()
         val name = "com/github/patrick/attach/C$currentTime"
@@ -217,9 +212,7 @@ object Attach {
 
         classWriter.visitEnd()
 
-        val bytes = classWriter.toByteArray()
-
-        println(bytes.joinToString("") { "%02x".format(it) })
-        return bytes
+//        println(bytes.joinToString("") { "%02x".format(it) })
+        return classWriter.toByteArray()
     }
 }
