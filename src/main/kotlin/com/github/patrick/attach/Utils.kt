@@ -16,9 +16,7 @@ internal object Utils {
 
     @JvmStatic
     internal val currentJar by lazy {
-        File(Attach::class.java.protectionDomain.codeSource.location.toURI()).also {
-            println(it.canonicalPath)
-        }
+        File(Attach::class.java.protectionDomain.codeSource.location.toURI())
     }
 
     @JvmStatic
