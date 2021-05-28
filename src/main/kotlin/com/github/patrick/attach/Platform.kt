@@ -1,23 +1,9 @@
 package com.github.patrick.attach
 
-enum class Platform(val dir: String, val binary: String, classes: List<String>) {
-    LINUX(
-        "linux/",
-        "libattach.so",
-        listOf("LinuxVirtualMachine", "LinuxAttachProvider", "LinuxVirtualMachine\$SocketInputStream")
-    ),
-    MAC(
-        "mac/",
-        "libattach.dylib",
-        listOf("BsdVirtualMachine", "BsdAttachProvider", "BsdVirtualMachine\$SocketInputStream")
-    ),
-    WINDOWS(
-        "windows/",
-        "attach.dll",
-        listOf("WindowsVirtualMachine", "WindowsAttachProvider", "WindowsVirtualMachine\$PipedInputStream")
-    );
-
-    internal val classes = classes.toList()
+enum class Platform(val dir: String, val binary: String) {
+    LINUX("linux/", "libattach.so"),
+    MAC("mac/", "libattach.dylib"),
+    WINDOWS("windows/", "attach.dll");
 
     companion object {
         @JvmStatic
@@ -36,7 +22,7 @@ enum class Platform(val dir: String, val binary: String, classes: List<String>) 
 
         @JvmStatic
         val is64Bit: Boolean
-            get () {
+            get() {
                 val osArch = System.getProperty("os.arch")
                 return osArch == "amd64" || osArch == "x86_64"
             }
