@@ -1,11 +1,25 @@
 package com.github.patrick.attach
 
+import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
+import javax.tools.ToolProvider
 
 internal object Utils {
     @JvmStatic
-    private val LEGACY_CLASS_DEFINITION = System.getProperty("java.class.version").toFloat() < 53
+    internal val isLegacy = runCatching {
+        Runtime::class.java.getDeclaredMethod("version")
+    }.isFailure
+
+    @JvmStatic
+    internal val isJDK = ToolProvider.getSystemJavaCompiler() != null
+
+    @JvmStatic
+    internal val currentJar by lazy {
+        File(Attach::class.java.protectionDomain.codeSource.location.toURI()).also {
+            println(it.canonicalPath)
+        }
+    }
 
     @JvmStatic
     @Volatile
@@ -24,7 +38,7 @@ internal object Utils {
     @JvmStatic
     internal fun defineClass(data: ByteArray): Class<*> {
         return try {
-            if (LEGACY_CLASS_DEFINITION) defineClassLegacy(data) else defineClassModern(data)
+            if (isLegacy) defineClassLegacy(data) else defineClassModern(data)
         } catch (e: SecurityException) {
             throw RuntimeException("Cannot use reflection to dynamically load a class.", e)
         } catch (e: NoSuchMethodException) {

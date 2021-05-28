@@ -9,6 +9,8 @@ import net.bytebuddy.jar.asm.FieldVisitor
 import net.bytebuddy.jar.asm.MethodVisitor
 import net.bytebuddy.jar.asm.Opcodes
 import net.bytebuddy.matcher.ElementMatchers
+import java.net.URLClassLoader
+
 
 object Attach {
     @JvmStatic
@@ -17,7 +19,17 @@ object Attach {
     @JvmStatic
     fun Class<*>.patch(methodName: String, prefix: (() -> Unit)? = null, postfix: (() -> Unit)? = null) {
         if (!initialized) {
-            ByteBuddyAgent.install()
+            if (Utils.isLegacy && !Utils.isJDK) {
+                Tools.loadAttachLibrary()
+                ByteBuddyAgent.install(ByteBuddyAgent.AttachmentProvider {
+                    ByteBuddyAgent.AttachmentProvider.Accessor.Simple.of(
+                        URLClassLoader(arrayOf(Utils.currentJar.toURI().toURL()), ClassLoader.getSystemClassLoader()),
+                        Utils.currentJar
+                    )
+                })
+            } else {
+                ByteBuddyAgent.install()
+            }
             initialized = true
         }
 

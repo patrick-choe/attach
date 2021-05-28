@@ -1,8 +1,11 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import groovy.lang.MissingPropertyException
+import org.gradle.internal.jvm.Jvm
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    `maven-publish`
     kotlin("jvm") version "1.5.0"
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
@@ -34,6 +37,11 @@ dependencies {
 }
 
 tasks {
+    withType<JavaCompile> {
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
+    }
+
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
     }
@@ -45,8 +53,14 @@ tasks {
             result.value.drop(1)
         }
 
+        from(files(Jvm.current().toolsJar))
+
         relocations.forEach { pattern ->
             relocate(pattern, "com.github.patrick.$projectName.shaded.$pattern")
+        }
+
+        manifest {
+            attributes("Main-Class" to "com.github.patrick.attach.plugin.MainKt")
         }
     }
 
@@ -71,3 +85,18 @@ tasks {
         }
     }
 }
+
+try {
+    publishing {
+        publications {
+            create<MavenPublication>(rootProject.name) {
+                from(components["java"])
+                artifact(tasks["sourcesJar"])
+
+                repositories {
+                    mavenLocal()
+                }
+            }
+        }
+    }
+} catch (ignored: MissingPropertyException) {}
