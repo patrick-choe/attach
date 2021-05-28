@@ -13,13 +13,13 @@ plugins {
 group = "com.github.patrick-mc"
 version = "1.0-SNAPSHOT"
 
-val kebabRegex = "-[a-z]".toRegex()
-val relocations = setOf(
-    "kotlin",
-    "net.bytebuddy",
-    "org.intellij.lang.annotations",
-    "org.jetbrains.annotations"
-)
+//val kebabRegex = "-[a-z]".toRegex()
+//val relocations = setOf(
+//    "kotlin",
+//    "net.bytebuddy",
+//    "org.intellij.lang.annotations",
+//    "org.jetbrains.annotations"
+//)
 
 repositories {
     maven("https://repo.maven.apache.org/maven2/")
@@ -44,15 +44,15 @@ tasks {
     withType<ShadowJar> {
         archiveClassifier.set("")
 
-        val projectName = kebabRegex.replace(rootProject.name) { result ->
-            result.value.drop(1)
-        }
+//        val projectName = kebabRegex.replace(rootProject.name) { result ->
+//            result.value.drop(1)
+//        }
 
         from(files(Jvm.current().toolsJar))
 
-        relocations.forEach { pattern ->
-            relocate(pattern, "com.github.patrick.$projectName.shaded.$pattern")
-        }
+//        relocations.forEach { pattern ->
+//            relocate(pattern, "com.github.patrick.$projectName.shaded.$pattern")
+//        }
 
         manifest {
             attributes("Main-Class" to "com.github.patrick.attach.plugin.MainKt")

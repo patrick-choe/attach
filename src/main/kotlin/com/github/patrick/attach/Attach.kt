@@ -81,8 +81,8 @@ object Attach {
             fieldVisitor = classWriter.visitField(
                 Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC,
                 "_prefix",
-                "Lcom/github/patrick/attach/shaded/kotlin/jvm/functions/Function0;",
-                "Lcom/github/patrick/attach/shaded/kotlin/jvm/functions/Function0<*>;",
+                "Lkotlin/jvm/functions/Function0;",
+                "Lkotlin/jvm/functions/Function0<*>;",
                 null
             )
 
@@ -91,8 +91,8 @@ object Attach {
             fieldVisitor = classWriter.visitField(
                 Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC,
                 "_postfix",
-                "Lcom/github/patrick/attach/shaded/kotlin/jvm/functions/Function0;",
-                "Lcom/github/patrick/attach/shaded/kotlin/jvm/functions/Function0<*>;",
+                "Lkotlin/jvm/functions/Function0;",
+                "Lkotlin/jvm/functions/Function0<*>;",
                 null
             )
 
@@ -125,7 +125,7 @@ object Attach {
                 Opcodes.PUTSTATIC,
                 name,
                 "_prefix",
-                "Lcom/github/patrick/attach/shaded/kotlin/jvm/functions/Function0;"
+                "Lkotlin/jvm/functions/Function0;"
             )
 
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 2)
@@ -134,7 +134,7 @@ object Attach {
                 Opcodes.PUTSTATIC,
                 name,
                 "_postfix",
-                "Lcom/github/patrick/attach/shaded/kotlin/jvm/functions/Function0;"
+                "Lkotlin/jvm/functions/Function0;"
             )
 
             methodVisitor.visitInsn(Opcodes.RETURN)
@@ -154,7 +154,7 @@ object Attach {
             )
 
             methodVisitor.visitAnnotation(
-                "Lcom/github/patrick/attach/shaded/net/bytebuddy/asm/Advice\$OnMethodEnter;",
+                "Lnet/bytebuddy/asm/Advice\$OnMethodEnter;",
                 true
             )
 
@@ -162,7 +162,7 @@ object Attach {
                 Opcodes.GETSTATIC,
                 name,
                 "_prefix",
-                "Lcom/github/patrick/attach/shaded/kotlin/jvm/functions/Function0;"
+                "Lkotlin/jvm/functions/Function0;"
             )
 
             methodVisitor.visitMethodInsn(
@@ -190,7 +190,7 @@ object Attach {
             )
 
             methodVisitor.visitAnnotation(
-                "Lcom/github/patrick/attach/shaded/net/bytebuddy/asm/Advice\$OnMethodExit;",
+                "Lnet/bytebuddy/asm/Advice\$OnMethodExit;",
                 true
             )
 
@@ -198,7 +198,7 @@ object Attach {
                 Opcodes.GETSTATIC,
                 name,
                 "_postfix",
-                "Lcom/github/patrick/attach/shaded/kotlin/jvm/functions/Function0;"
+                "Lkotlin/jvm/functions/Function0;"
             )
 
             methodVisitor.visitMethodInsn(
