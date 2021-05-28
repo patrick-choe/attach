@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.github.patrick-mc"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
     maven("https://repo.maven.apache.org/maven2/")
@@ -31,17 +31,13 @@ tasks {
     }
 
     jar {
-        from(named("toolsJar"))
+        from("src/main/resources") {
+            include("tools/attach/tools-min.jar")
+        }
     }
 
     processResources {
         exclude("**/*.jar")
-    }
-
-    create<Jar>("toolsJar") {
-        archiveBaseName.set("tools-min")
-        from("src/main/resources/tools/attach/tools-min.jar")
-        into("tools/attach")
     }
 
     create<Jar>("sourcesJar") {
