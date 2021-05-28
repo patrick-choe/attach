@@ -37,11 +37,6 @@ dependencies {
 }
 
 tasks {
-    withType<JavaCompile> {
-        sourceCompatibility = "1.8"
-        targetCompatibility = "1.8"
-    }
-
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
     }
